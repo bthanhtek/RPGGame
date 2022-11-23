@@ -11,12 +11,23 @@ public class Health : MonoBehaviour
 
     public bool isDeath = false;
 
+    public HealthBar healthBar;
+
+    public GameObject Potion;
+
+    public GameOverScreen gameOver;
+
+    private void Start()
+    {
+        healthBar.setHealth(currentHealth, maxHealth, gameObject);
+    }
 
     public void InitializeHealth(int HeathValue)
     {
         currentHealth = HeathValue;
         maxHealth = HeathValue;
         isDeath = false;
+       
     }
 
 
@@ -34,8 +45,9 @@ public class Health : MonoBehaviour
         {
             return;
         }
-
         currentHealth -= amount;
+        Debug.Log(gameObject.name + " : " + currentHealth);
+        healthBar.setHealth(currentHealth, maxHealth, gameObject);
 
         if (currentHealth > 0)
         {
@@ -46,7 +58,9 @@ public class Health : MonoBehaviour
             
             OnDeathWithReference.Invoke(sender);
             isDeath = true;
+
             StartCoroutine(delayTime());
+           
            
         }
 
@@ -57,6 +71,11 @@ public class Health : MonoBehaviour
         print(Time.time);
         yield return new WaitForSecondsRealtime(1);
         print(Time.time);
+        Instantiate(Potion, gameObject.transform.position, Quaternion.identity);
         Destroy(gameObject);
+        if (gameObject.tag == "Player")
+        {
+            gameOver.isActive();
+        }
     }
 }
